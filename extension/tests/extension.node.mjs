@@ -1,0 +1,64 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import fs from 'node:fs/promises';
+import {JSDOM} from 'jsdom';
+import {normalizePackage} from '../shared/schema.js';
+
+const valid={schemaVersion:'1.1.0',productId:'p1',productName:'Spring Set',productType:'Digital paper',title:'Spring paper set',description:'A useful description',tags:['spring','SPRING','paper',''],price:6.5,quantity:999,sku:'SM-DP-1',categorySuggestion:'Digital Downloads'};
+
+test('validates and normalizes packages without duplicate tags',()=>{
+  const pkg=normalizePackage(valid);
+  assert.deepEqual(pkg.tags,['spring','paper']);
+  assert.equal(pkg.imageChecklist.length,0);
+  assert.throws(()=>normalizePackage({...valid,schemaVersion:'9.0'}),/not supported/);
+  assert.throws(()=>normalizePackage({...valid,title:undefined}),/missing: title/);
+});
+
+test('detects a supported Etsy editor and fills reactive fields once',async()=>{
+  const dom=new JSDOM(`<!doctype html><body>
+    <label for="title">Title</label><input id="title" name="title">
+    <label for="description">Description</label><textarea id="description" name="description"></textarea>
+    <label for="price">Price</label><input id="price" name="price">
+    <label for="quantity">Quantity</label><input id="quantity" name="quantity">
+    <label for="sku">SKU</label><input id="sku" name="sku">
+    <div data-selector="tags"><input id="tags" aria-label="Add a tag"></div>
+  </body>`,{url:'https://www.etsy.com/your/shops/demo/listing-editor/create',runScripts:'outside-only'});
+  Object.defineProperty(dom.window.HTMLElement.prototype,'offsetWidth',{get(){return 100}});
+  let listener;
+  dom.window.chrome={runtime:{onMessage:{addListener(fn){listener=fn}}}};
+  const tagInput=dom.window.document.querySelector('#tags');
+  tagInput.addEventListener('keydown',event=>{if(event.key==='Enter'&&tagInput.value){const chip=dom.window.document.createElement('span');chip.dataset.tag='';chip.textContent=tagInput.value;tagInput.parentElement.append(chip);tagInput.value=''}});
+  dom.window.eval(await fs.readFile(new URL('../content/etsy-map.js',import.meta.url),'utf8'));
+  dom.window.eval(await fs.readFile(new URL('../content/content.js',import.meta.url),'utf8'));
+  const ping=await new Promise(resolve=>listener({type:'SHOPMINT_PING'},null,resolve));
+  assert.equal(ping.isListingPage,true);
+  const report=await new Promise(resolve=>listener({type:'SHOPMINT_FILL',package:normalizePackage(valid),mode:'all'},null,resolve));
+  assert.equal(report.ok,true);
+  assert.equal(dom.window.document.querySelector('#title').value,valid.title);
+  assert.equal(dom.window.document.querySelectorAll('[data-tag]').length,2);
+  assert.equal(report.results.find(x=>x.field==='category').status,'manual');
+  assert.equal(report.results.find(x=>x.field==='digitalFiles').status,'manual');
+});
+
+test('refuses to fill an Etsy page outside the listing editor',async()=>{
+  const dom=new JSDOM('<!doctype html><body><input name="title"></body>',{url:'https://www.etsy.com/your/shops/demo/tools/listings',runScripts:'outside-only'});
+  Object.defineProperty(dom.window.HTMLElement.prototype,'offsetWidth',{get(){return 100}});
+  let listener;
+  dom.window.chrome={runtime:{onMessage:{addListener(fn){listener=fn}}}};
+  dom.window.eval(await fs.readFile(new URL('../content/etsy-map.js',import.meta.url),'utf8'));
+  dom.window.eval(await fs.readFile(new URL('../content/content.js',import.meta.url),'utf8'));
+  const ping=await new Promise(resolve=>listener({type:'SHOPMINT_PING'},null,resolve));
+  assert.equal(ping.isListingPage,false);
+  const report=await new Promise(resolve=>listener({type:'SHOPMINT_FILL',package:normalizePackage(valid),mode:'all'},null,resolve));
+  assert.equal(report.ok,false);
+  assert.match(report.error,/listing create or edit page/i);
+});
+
+test('manifest is MV3 and content automation contains no publish action',async()=>{
+  const manifest=JSON.parse(await fs.readFile(new URL('../manifest.json',import.meta.url),'utf8'));
+  assert.equal(manifest.manifest_version,3);
+  assert.deepEqual(manifest.permissions,['storage','activeTab']);
+  const content=await fs.readFile(new URL('../content/content.js',import.meta.url),'utf8');
+  assert.doesNotMatch(content,/(querySelector|getByText|getByRole)[^\n]*(publish|submit)/i);
+  assert.doesNotMatch(content,/(publish|submit)[^\n]*\.click\s*\(/i);
+});
