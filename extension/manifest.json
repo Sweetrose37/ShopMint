@@ -1,9 +1,9 @@
 {
   "manifest_version": 3,
   "name": "SHOPMINT™ SIDEKICK",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Safely assists with Etsy listing fields using a SHOPMINT Listing Package. Never publishes.",
-  "permissions": ["storage", "activeTab"],
+  "permissions": ["storage", "activeTab", "scripting"],
   "host_permissions": ["https://www.etsy.com/your/shops/*", "https://www.etsy.com/listing/*"],
   "action": {
     "default_popup": "popup/popup.html",

@@ -65,7 +65,10 @@ test('refuses to fill an Etsy page outside the listing editor',async()=>{
 test('manifest is MV3 and content automation contains no publish action',async()=>{
   const manifest=JSON.parse(await fs.readFile(new URL('../manifest.json',import.meta.url),'utf8'));
   assert.equal(manifest.manifest_version,3);
-  assert.deepEqual(manifest.permissions,['storage','activeTab']);
+  assert.deepEqual(manifest.permissions,['storage','activeTab','scripting']);
+  const popup=await fs.readFile(new URL('../popup/popup.js',import.meta.url),'utf8');
+  assert.match(popup,/scripting\.executeScript/);
+  assert.match(popup,/content\/etsy-map\.js.*content\/content\.js/);
   const content=await fs.readFile(new URL('../content/content.js',import.meta.url),'utf8');
   assert.doesNotMatch(content,/(querySelector|getByText|getByRole)[^\n]*(publish|submit)/i);
   assert.doesNotMatch(content,/(publish|submit)[^\n]*\.click\s*\(/i);

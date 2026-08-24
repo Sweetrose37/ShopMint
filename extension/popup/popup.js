@@ -1,9 +1,18 @@
 import {normalizePackage,STORAGE_KEY} from '../shared/schema.js';
 const $=s=>document.querySelector(s);let current=null;let page={isListingPage:false};
+const isSupportedListing=url=>/^https:\/\/www\.etsy\.com\/(?:your\/shops\/[^/]+\/(?:listing-editor\/(?:create|edit)|(?:tools\/)?listings?\/(?:create|edit))|listing\/\d+\/edit)/i.test(url||'');
+async function connectToListing(tab){
+  try{return await chrome.tabs.sendMessage(tab.id,{type:'SHOPMINT_PING'})}catch(error){
+    if(!tab?.id||!isSupportedListing(tab.url))throw error;
+    await chrome.scripting.insertCSS({target:{tabId:tab.id},files:['content/panel.css']}).catch(()=>{});
+    await chrome.scripting.executeScript({target:{tabId:tab.id},files:['content/etsy-map.js','content/content.js']});
+    return chrome.tabs.sendMessage(tab.id,{type:'SHOPMINT_PING'});
+  }
+}
 const views={empty:$('#empty'),ready:$('#ready'),report:$('#report')};
 function show(name){Object.entries(views).forEach(([k,v])=>v.classList.toggle('hidden',k!==name))}
 function toast(message,error=false){const el=$('#toast');el.textContent=message;el.className=error?'show error':'show';setTimeout(()=>el.className='',2400)}
-async function detect(){const [tab]=await chrome.tabs.query({active:true,currentWindow:true});try{const result=await chrome.tabs.sendMessage(tab.id,{type:'SHOPMINT_PING'});page=result||{};$('#pageStatus').textContent=page.isListingPage?'Etsy listing detected':'Open an Etsy listing';$('#pageStatus').className=`page-pill ${page.isListingPage?'found':'waiting'}`}catch{page={isListingPage:false};$('#pageStatus').textContent='Open an Etsy listing';$('#pageStatus').className='page-pill waiting'}updateFill()}
+async function detect(){const [tab]=await chrome.tabs.query({active:true,currentWindow:true});try{const result=await connectToListing(tab);page=result||{};$('#pageStatus').textContent=page.isListingPage?'Etsy listing detected':'Open an Etsy listing';$('#pageStatus').className=`page-pill ${page.isListingPage?'found':'waiting'}`}catch{page={isListingPage:false};$('#pageStatus').textContent=isSupportedListing(tab?.url)?'Reload Sidekick extension':'Open an Etsy listing';$('#pageStatus').className='page-pill waiting'}updateFill()}
 function updateFill(){const b=$('#fill');if(!b)return;b.disabled=!page.isListingPage;b.title=page.isListingPage?'':'Open an Etsy listing creation or edit page first'}
 function render(pkg){current=pkg;show('ready');$('#productType').textContent=pkg.productType;$('#productName').textContent=pkg.productName;$('#packageMeta').textContent=`Package v${pkg.schemaVersion} · ${new Date(pkg.updatedAt||Date.now()).toLocaleDateString()}`;$('#titlePreview').textContent=pkg.title;$('#pricePreview').textContent=`$${Number(pkg.price).toFixed(2)}`;$('#tagCount').textContent=`${pkg.tags.length}/13`;$('#categoryNote').innerHTML=`<b>Category · manual selection</b><span>${pkg.categorySuggestion||'Choose the best matching Etsy category'}</span>`;$('#imageCount').textContent=String(pkg.imageChecklist?.length||pkg.mockups?.length||0);$('#fileCount').textContent=String(pkg.deliveryChecklist?.length||pkg.sourceFiles?.filter(x=>x.customerFile).length||0);updateFill()}
 async function loadFile(file){try{const pkg=normalizePackage(JSON.parse(await file.text()));await chrome.storage.local.set({[STORAGE_KEY]:pkg});render(pkg);toast('Package ready')}catch(error){toast(error.message||'Could not read this package',true)}}
