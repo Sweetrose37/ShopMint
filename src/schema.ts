@@ -29,15 +29,16 @@ export type ShopmintListingPackage={
   usageNotes:string;
   customerInstructions:string;
   sourceFiles:Array<{name:string;type:string;size:number;customerFile:boolean}>;
-  mockups:Array<{id:string;name:string;style:string;watermarked:boolean;createdAt:string}>;
-  imageChecklist:Array<{name:string;order:number;watermarked:boolean}>;
+  mockups:Array<{id:string;name:string;style:string;watermarked:boolean;createdAt:string;kind?:string;primary?:boolean;order?:number}>;
+  imageChecklist:Array<{name:string;order:number;watermarked:boolean;kind?:string;primary?:boolean}>;
   deliveryChecklist:Array<{name:string;size:number}>;
   createdAt:string;
   updatedAt:string;
 };
 
 export function createListingPackage(p:Project):ShopmintListingPackage{
-  return {schemaVersion:LISTING_SCHEMA_VERSION,exportedBy:'SHOPMINT',exportPurpose:'sidekick-listing-assist',productId:p.id,productName:p.productName,productType:p.productType,title:p.listing.title,description:p.listing.description,tags:p.listing.tags.slice(0,13),price:p.listing.price,salePrice:p.listing.salePrice,quantity:p.listing.quantity,sku:p.listing.sku,categorySuggestion:p.listing.categorySuggestion,materials:p.listing.materials,primaryColor:p.listing.primaryColor,secondaryColor:p.listing.secondaryColor,occasion:p.listing.occasion,holiday:p.listing.holiday,personalization:p.listing.personalization,digitalDisclosure:p.listing.digitalDisclosure,includedFiles:p.listing.includedFiles,usageNotes:p.listing.usageNotes,customerInstructions:p.listing.customerInstructions,sourceFiles:p.sourceFiles.map(({name,type,size,customerFile})=>({name,type,size,customerFile})),mockups:p.mockups.map(({id,name,style,watermarked,createdAt})=>({id,name,style,watermarked,createdAt})),imageChecklist:p.mockups.map((m,index)=>({name:m.name,order:index+1,watermarked:m.watermarked})),deliveryChecklist:p.sourceFiles.filter(f=>f.customerFile).map(({name,size})=>({name,size})),createdAt:p.createdAt,updatedAt:p.updatedAt};
+  const orderedMockups=[...p.mockups].sort((a,b)=>Number(Boolean(b.primary))-Number(Boolean(a.primary))||(a.order??999)-(b.order??999));
+  return {schemaVersion:LISTING_SCHEMA_VERSION,exportedBy:'SHOPMINT',exportPurpose:'sidekick-listing-assist',productId:p.id,productName:p.productName,productType:p.productType,title:p.listing.title,description:p.listing.description,tags:p.listing.tags.slice(0,13),price:p.listing.price,salePrice:p.listing.salePrice,quantity:p.listing.quantity,sku:p.listing.sku,categorySuggestion:p.listing.categorySuggestion,materials:p.listing.materials,primaryColor:p.listing.primaryColor,secondaryColor:p.listing.secondaryColor,occasion:p.listing.occasion,holiday:p.listing.holiday,personalization:p.listing.personalization,digitalDisclosure:p.listing.digitalDisclosure,includedFiles:p.listing.includedFiles,usageNotes:p.listing.usageNotes,customerInstructions:p.listing.customerInstructions,sourceFiles:p.sourceFiles.map(({name,type,size,customerFile})=>({name,type,size,customerFile})),mockups:orderedMockups.map(({id,name,style,watermarked,createdAt,kind,primary,order})=>({id,name,style,watermarked,createdAt,kind,primary,order})),imageChecklist:orderedMockups.map((m,index)=>({name:m.name,order:index+1,watermarked:m.watermarked,kind:m.kind,primary:m.primary})),deliveryChecklist:p.sourceFiles.filter(f=>f.customerFile).map(({name,size})=>({name,size})),createdAt:p.createdAt,updatedAt:p.updatedAt};
 }
 
 export function listingReadiness(p:Project){
