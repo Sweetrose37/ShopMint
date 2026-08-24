@@ -13,6 +13,8 @@ Production check: `npm run build`, then `npm run preview`.
 
 The hosted QA build contains only the standalone browser app. The `extension/` directory remains a desktop-only, unpacked Chrome companion and is intentionally excluded from Vite's `dist/` output.
 
+Public QA: `https://sweetrose37.github.io/ShopMint/`. GitHub Pages deploys the standalone app from `main`; the Sidekick extension is not part of the Pages artifact.
+
 All projects and settings are stored in browser `localStorage`; uploaded file data never leaves the browser. Large files are limited to 25 MB per local preview because browser storage varies by device.
 
 ## PASS 2 listing contract
