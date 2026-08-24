@@ -16,7 +16,7 @@ describe('DTF marketplace gallery engine',()=>{
     fillStyle:'',strokeStyle:'',lineWidth:1,globalAlpha:1,font:'',textAlign:'left',textBaseline:'alphabetic',
     shadowColor:'',shadowBlur:0,shadowOffsetY:0,
     beginPath:vi.fn(),roundRect:vi.fn(),fill:vi.fn(),fillRect:vi.fn(),arc:vi.fn(),drawImage:vi.fn(),
-    save:vi.fn(),restore:vi.fn(),translate:vi.fn(),rotate:vi.fn(),fillText:vi.fn(),strokeRect:vi.fn(),
+    save:vi.fn(),restore:vi.fn(),translate:vi.fn(),rotate:vi.fn(),fillText:vi.fn(),strokeText:vi.fn(),strokeRect:vi.fn(),
     measureText:(value:string)=>({width:value.length*13}),
     createLinearGradient:()=>({addColorStop:vi.fn()})
   };
@@ -51,8 +51,15 @@ describe('DTF marketplace gallery engine',()=>{
   });
 
   it('never prints import plumbing or a source filename as marketplace headline copy',()=>{
-    expect(marketplaceHeadline('Google Drive download',5)).toBe('5-DESIGN COLLECTION');
-    expect(marketplaceHeadline('bundle-export.zip',5)).toBe('5-DESIGN COLLECTION');
+    expect(marketplaceHeadline('Google Drive download',5)).toBe('PREMIUM DESIGN COLLECTION');
+    expect(marketplaceHeadline('bundle-export.zip',5)).toBe('PREMIUM DESIGN COLLECTION');
     expect(marketplaceHeadline('Dark Luxe Society',5)).toBe('Dark Luxe Society');
+  });
+
+  it('renders a contrast-safe watermark onto every generated listing image',async()=>{
+    const files:SourceFile[]=[{id:'design-1',name:'design.png',type:'image/png',size:2048,width:4500,height:5400,dataUrl:'data:image/png;base64,exact-original',customerFile:true}];
+    await generateMarketplaceGallery({productName:'Dark Luxe Society',productType:'DTF PNG',files,direction:'auto',watermark:{enabled:true,text:'PREVIEW',opacity:18},scenes:{tee:'scene:tee',sweatshirt:'scene:sweatshirt',flatlay:'scene:flatlay'}});
+    expect(context.strokeText).toHaveBeenCalled();
+    expect(context.fillText).toHaveBeenCalled();
   });
 });
