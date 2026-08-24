@@ -4,7 +4,7 @@ import fs from 'node:fs/promises';
 import {JSDOM} from 'jsdom';
 import {normalizePackage} from '../shared/schema.js';
 
-const valid={schemaVersion:'1.1.0',productId:'p1',productName:'Spring Set',productType:'Digital paper',title:'Spring paper set',description:'A useful description',tags:['spring','SPRING','paper',''],price:6.5,quantity:999,sku:'SM-DP-1',categorySuggestion:'Digital Downloads'};
+const valid={schemaVersion:'1.2.0',productId:'p1',productName:'Spring Set',productType:'Digital paper',title:'Spring paper set',description:'A useful description',tags:['spring','SPRING','paper',''],price:6.5,quantity:999,sku:'SM-DP-1',categorySuggestion:'Digital Downloads',creationDetails:{whoMade:'i-did',whatIsIt:'finished-product',digitalCreation:'created-by-me',productionPartner:'none',productionPartnerName:'',whenMade:'not-applicable-digital'}};
 
 test('validates and normalizes packages without duplicate tags',()=>{
   const pkg=normalizePackage(valid);
@@ -22,6 +22,9 @@ test('detects a supported Etsy editor and fills reactive fields once',async()=>{
     <label for="quantity">Quantity</label><input id="quantity" name="quantity">
     <label for="sku">SKU</label><input id="sku" name="sku">
     <div data-selector="tags"><input id="tags" aria-label="Add a tag"></div>
+    <fieldset><legend>Who made it?</legend><label><input id="who" type="radio" name="who">I did</label><label><input type="radio" name="who">A member of my shop</label></fieldset>
+    <fieldset><legend>What is it?</legend><label><input id="what" type="radio" name="what">A finished product</label><label><input type="radio" name="what">A supply or tool to make things</label></fieldset>
+    <fieldset><legend>How is this digital content created?</legend><label><input id="creation" type="radio" name="creation">Created by me <span>It’s designed and created entirely by me.</span></label><label><input type="radio" name="creation">With an AI generator</label></fieldset>
   </body>`,{url:'https://www.etsy.com/your/shops/demo/listing-editor/create',runScripts:'outside-only'});
   Object.defineProperty(dom.window.HTMLElement.prototype,'offsetWidth',{get(){return 100}});
   let listener;
@@ -36,6 +39,11 @@ test('detects a supported Etsy editor and fills reactive fields once',async()=>{
   assert.equal(report.ok,true);
   assert.equal(dom.window.document.querySelector('#title').value,valid.title);
   assert.equal(dom.window.document.querySelectorAll('[data-tag]').length,2);
+  assert.equal(dom.window.document.querySelector('#who').checked,true);
+  assert.equal(dom.window.document.querySelector('#what').checked,true);
+  assert.equal(dom.window.document.querySelector('#creation').checked,true);
+  assert.equal(report.results.find(x=>x.field==='digitalCreation').status,'filled');
+  assert.match(report.results.find(x=>x.field==='productionPartner').reason,/MANUAL REVIEW REQUIRED.*No production partner/i);
   assert.equal(report.results.find(x=>x.field==='category').status,'manual');
   assert.equal(report.results.find(x=>x.field==='digitalFiles').status,'manual');
 });

@@ -15,6 +15,14 @@ describe('SHOPMINT Sidekick integration',()=>{
     fireEvent.click(screen.getByRole('button',{name:/create workspace/i}));
     fireEvent.click(screen.getByRole('button',{name:/etsy sidekick/i}));
     expect(screen.getByText(/listing readiness/i)).toBeTruthy();
+    expect((screen.getByRole('button',{name:/export for sidekick/i}) as HTMLButtonElement).disabled).toBe(true);
+    expect(screen.getByText(/creation details · ai disclosure/i)).toBeTruthy();
+    fireEvent.click(screen.getByRole('button',{name:/listing builder/i}));
+    fireEvent.click(screen.getByLabelText(/^i did$/i));
+    fireEvent.click(screen.getByLabelText(/^a finished product$/i));
+    fireEvent.click(screen.getByLabelText(/created by me/i));
+    fireEvent.click(screen.getByLabelText(/^no production partner$/i));
+    fireEvent.click(screen.getByRole('button',{name:/etsy sidekick/i}));
     expect((screen.getByRole('button',{name:/export for sidekick/i}) as HTMLButtonElement).disabled).toBe(false);
     expect(screen.getByText(/review-first by design/i)).toBeTruthy();
   });
@@ -27,5 +35,7 @@ describe('SHOPMINT Sidekick integration',()=>{
     fireEvent.click(screen.getByRole('button',{name:/listing builder/i}));
     expect(screen.getByLabelText(/customer instructions/i)).toBeTruthy();
     expect(screen.getByRole('button',{name:/copy all/i})).toBeTruthy();
+    expect(screen.getByText(/^creation details$/i)).toBeTruthy();
+    expect(screen.getByText(/product artwork ≠ marketing presentation/i)).toBeTruthy();
   });
 });

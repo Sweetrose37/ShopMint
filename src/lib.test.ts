@@ -17,7 +17,8 @@ describe('SHOPMINT listing engine',()=>{
     const project=newProject('Spring Papers','Digital paper',defaults);
     project.sourceFiles=[{id:'file-1',name:'paper.png',type:'image/png',size:10,dataUrl:'data:image/png;base64,AAAA',customerFile:true}];
     const payload=exportShape(project);
-    expect(payload.schemaVersion).toBe('1.1.0');
+    expect(payload.schemaVersion).toBe('1.2.0');
+    expect(payload.creationDetails?.digitalCreation).toBe('');
     expect(payload.exportPurpose).toBe('sidekick-listing-assist');
     expect(payload.tags).toHaveLength(13);
     expect(JSON.stringify(payload)).not.toContain('base64');

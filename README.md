@@ -19,7 +19,7 @@ All projects and settings are stored in browser `localStorage`; uploaded file da
 
 ## PASS 2 listing contract
 
-The extension-ready export is a UTF-8 JSON document with `schemaVersion: "1.1.0"`. Version 1.0 remains accepted by SIDEKICK. See [`docs/listing-package-schema.md`](docs/listing-package-schema.md). The implementation source of truth is `createListingPackage()` in `src/schema.ts`.
+The extension-ready export is a UTF-8 JSON document with `schemaVersion: "1.2.0"`. Versions 1.0 and 1.1 remain accepted by SIDEKICK. See [`docs/listing-package-schema.md`](docs/listing-package-schema.md). The implementation source of truth is `createListingPackage()` in `src/schema.ts`.
 
 ## Install SHOPMINT SIDEKICK
 

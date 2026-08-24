@@ -14,5 +14,10 @@ globalThis.ShopmintSidekick.etsy={
     holiday:{labels:['Holiday'],selectors:['input[name*="holiday" i]','select[name*="holiday" i]']},
     personalization:{labels:['Personalization','Instructions for buyers'],selectors:['textarea[name*="personalization" i]','input[name*="personalization" i]']}
   },
-  tags:{inputSelectors:['input[name*="tag" i]','input[aria-label*="tag" i]','input[placeholder*="tag" i]','[data-selector="tags"] input'],containerSelectors:['[role="group"][aria-label="Tags"]','[role="group"][aria-labelledby*="tag" i]','[data-selector="tags"]','[data-field="tags"]','section[aria-label*="tag" i]']}
+  tags:{inputSelectors:['input[name*="tag" i]','input[aria-label*="tag" i]','input[placeholder*="tag" i]','[data-selector="tags"] input'],containerSelectors:['[role="group"][aria-label="Tags"]','[role="group"][aria-labelledby*="tag" i]','[data-selector="tags"]','[data-field="tags"]','section[aria-label*="tag" i]']},
+  creation:{
+    whoMade:{question:'Who made it?',answers:{'i-did':'I did','shop-member':'A member of my shop','another-company-person':'Another company or person'}},
+    whatIsIt:{question:'What is it?',answers:{'finished-product':'A finished product','supply-tool':'A supply or tool to make things'}},
+    digitalCreation:{question:'How is this digital content created?',answers:{'created-by-me':'Created by me','ai-generator':'With an AI generator'}}
+  }
 };

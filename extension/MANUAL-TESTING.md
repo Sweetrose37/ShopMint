@@ -2,7 +2,7 @@
 
 ## Package handling
 
-- Load a valid SHOPMINT v1.1 package; confirm name, type, title, price, tags, and version.
+- Load a valid SHOPMINT v1.2 package; confirm name, type, title, price, tags, creation details, and version.
 - Load a valid legacy v1.0 package.
 - Try malformed JSON, an unsupported version, missing fields, and more than 13 tags.
 - Replace and remove the current package, close/reopen the popup, and confirm storage behavior.

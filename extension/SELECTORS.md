@@ -25,6 +25,11 @@ The logged-in Etsy editor at `/your/shops/me/listing-editor/edit/{id}` exposed t
 - Price: textbox named `Price`
 - Quantity: textbox named `Quantity`
 - SKU: initially a button named `Add SKU`; SIDEKICK may reveal this control before filling
+- Who made it?: radios `I did`, `A member of my shop`, and `Another company or person`
+- What is it?: radios `A finished product` and `A supply or tool to make things`
+- How is this digital content created?: radios `Created by me` and `With an AI generator`
+- Production partners: seller-specific `Add production partners` workflow; intentionally reported as **MANUAL REVIEW REQUIRED** with the SHOPMINT answer
+- No separate manufacture-period question was exposed for the verified digital listing; the selected category summary displayed `Digital files • 2020 - 2026`
 - Final seller control: button named `Publish changes`; SIDEKICK never queries or interacts with it
 
 Image and digital-file controls use browser file pickers and remain intentionally manual.
