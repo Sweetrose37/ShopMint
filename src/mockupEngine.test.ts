@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import {afterEach,beforeEach,describe,expect,it,vi} from 'vitest';
-import {GALLERY_KINDS,generateMarketplaceGallery} from './mockupEngine';
+import {GALLERY_KINDS,generateMarketplaceGallery,marketplaceHeadline} from './mockupEngine';
 import type {SourceFile} from './types';
 
 class LoadedImage {
@@ -48,5 +48,11 @@ describe('DTF marketplace gallery engine',()=>{
     expect(gallery.every(image=>image.dataUrl.startsWith('data:image/png'))).toBe(true);
     expect(files.map(file=>file.dataUrl)).toEqual(originals);
     expect(context.drawImage).toHaveBeenCalled();
+  });
+
+  it('never prints import plumbing or a source filename as marketplace headline copy',()=>{
+    expect(marketplaceHeadline('Google Drive download',5)).toBe('5-DESIGN COLLECTION');
+    expect(marketplaceHeadline('bundle-export.zip',5)).toBe('5-DESIGN COLLECTION');
+    expect(marketplaceHeadline('Dark Luxe Society',5)).toBe('Dark Luxe Society');
   });
 });

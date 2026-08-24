@@ -17,10 +17,11 @@ async function sourceFromFile(file:File,relativePath?:string):Promise<SourceFile
 }
 
 export type ProductImport={files:SourceFile[];folderName:string;ignored:number;pngCount:number;imageCount:number;archiveCount:number};
-export async function importProductFiles(input:File[]|FileList,folderNameHint='Product folder'):Promise<ProductImport>{
+export async function importProductFiles(input:File[]|FileList,folderNameHint=''):Promise<ProductImport>{
   const raw=Array.from(input);const output:SourceFile[]=[];let ignoredCount=0;
   const firstPath=(raw[0] as File&{webkitRelativePath?:string})?.webkitRelativePath;
-  const folderName=folderNameHint==='Product folder'&&firstPath?firstPath.split('/')[0]:folderNameHint;
+  const archiveName=raw.length===1&&extension(raw[0]?.name)==='zip'?raw[0].name.replace(/\.zip$/i,''):'';
+  const folderName=folderNameHint||firstPath?.split('/')[0]||archiveName||'Untitled product';
   for(const file of raw){
     const path=(file as File&{webkitRelativePath?:string}).webkitRelativePath||file.name;
     if(!isSupportedProductFile(path)){ignoredCount++;continue}

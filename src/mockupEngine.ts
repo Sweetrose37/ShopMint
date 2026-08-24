@@ -18,6 +18,7 @@ const themes:Record<GalleryDirection,Theme>={
 };
 type Options={productName:string;productType:string;files:SourceFile[];direction:GalleryDirection;watermark?:{enabled:boolean;text:string;opacity:number};scenes:{tee:string;sweatshirt:string;flatlay:string};onProgress?:(label:string)=>void};
 const size=1200;
+export function marketplaceHeadline(productName:string,count:number){const clean=productName.trim();const internal=/^(google drive download|selected files?|product folder|untitled product|downloads?)$/i.test(clean)||/\.(png|jpe?g|webp|pdf|zip)$/i.test(clean);return internal?`${count}-DESIGN COLLECTION`:clean}
 
 const load=(src:string)=>new Promise<HTMLImageElement>((resolve,reject)=>{const image=new Image();image.onload=()=>resolve(image);image.onerror=reject;image.src=src});
 const canvas=()=>{const c=document.createElement('canvas');c.width=size;c.height=size;return c};
@@ -30,7 +31,7 @@ function card(ctx:CanvasRenderingContext2D,image:HTMLImageElement,x:number,y:num
 function watermark(ctx:CanvasRenderingContext2D,opt:Options['watermark']){if(!opt?.enabled||!opt.text)return;ctx.save();ctx.globalAlpha=opt.opacity/100;ctx.fillStyle='#fff';ctx.font='800 28px Arial';ctx.textAlign='center';ctx.translate(600,600);ctx.rotate(-Math.PI/6);for(let y=-700;y<700;y+=150)for(let x=-700;x<700;x+=360)ctx.fillText(opt.text,x,y);ctx.restore()}
 function sceneUrl(t:Theme,o:Options){return o.scenes[t.scene]}
 
-async function render(kind:GalleryKind,o:Options,images:HTMLImageElement[],theme:Theme){const c=canvas(),ctx=c.getContext('2d')!;background(ctx,theme);const count=images.length;const headline=o.productName||`${count} Design DTF Bundle`;
+async function render(kind:GalleryKind,o:Options,images:HTMLImageElement[],theme:Theme){const c=canvas(),ctx=c.getContext('2d')!;background(ctx,theme);const count=images.length;const headline=marketplaceHeadline(o.productName,count);
   if(kind==='hero'){
     const scene=await load(o.scenes.flatlay);ctx.drawImage(scene,0,0,size,size);ctx.fillStyle='rgba(20,11,22,.48)';ctx.fillRect(0,0,size,size);
     label(ctx,'SHOPMINT COLLECTION',70,75,theme.accent,20);multiline(ctx,headline.toUpperCase(),70,125,650,72,'#fff',62,800);
