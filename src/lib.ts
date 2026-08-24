@@ -1,7 +1,7 @@
 import type {Listing,ProductType,Project,Settings} from './types';
 import {createListingPackage} from './schema';
 export const uid=()=>crypto.randomUUID?.()||`${Date.now()}-${Math.random()}`;
-export const defaults:Settings={brandName:'',watermarkText:'© YOUR SHOP',defaultPrice:5.99,skuPrefix:'SM',usageStatement:'For personal and small-business use. Do not resell or redistribute the digital files.',customerInstructions:'Your files are available immediately after purchase. Download, unzip if needed, and enjoy.',digitalNote:'This is a digital download. No physical item will be shipped.',mockupPreference:'Flat-lay thumbnail',fileNaming:'kebab-case',creationDefaults:{whoMade:'',whatIsIt:'',productionPartner:'',productionPartnerName:'',whenMade:'not-applicable-digital'},onboarded:false};
+export const defaults:Settings={brandName:'',watermarkText:'© YOUR SHOP',defaultPrice:5.99,skuPrefix:'SM',usageStatement:'For personal and small-business use. Do not resell or redistribute the digital files.',customerInstructions:'Your files are available immediately after purchase. Download, unzip if needed, and enjoy.',digitalNote:'This is a digital download. No physical item will be shipped.',mockupPreference:'Flat-lay thumbnail',fileNaming:'kebab-case',creationDefaults:{whoMade:'',whatIsIt:'',productionPartner:'',productionPartnerName:'',whenMade:''},onboarded:false};
 const keywords:Record<string,string[]>={
  'DTF PNG':['dtf transfer','shirt design','png download','print ready'], 'Sublimation PNG':['sublimation design','png download','heat transfer','printable art'],
  'Tumbler wrap':['tumbler wrap','20oz tumbler','skinny tumbler','wrap design'], 'Sticker pack':['sticker bundle','digital stickers','planner stickers','printable sticker'],

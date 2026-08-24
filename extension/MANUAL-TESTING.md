@@ -20,7 +20,8 @@
 - Confirm title, description, price, quantity, and SKU produce native page events.
 - Confirm blank and duplicate tags are skipped and no tag is retried continuously.
 - Confirm missing fields appear under Not found or Needs review.
-- Confirm category, listing images, and digital files are always reported Manual.
+- Confirm packaged listing images are handed to Etsy in gallery order and reported for review.
+- Confirm category and customer digital files remain clearly reported Manual.
 - Refresh Etsy and rerun once to verify no duplicate tag burst.
 
 ## Fallback and UI

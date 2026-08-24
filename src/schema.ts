@@ -32,6 +32,7 @@ export type ShopmintListingPackage={
   sourceFiles:Array<{name:string;type:string;size:number;customerFile:boolean}>;
   mockups:Array<{id:string;name:string;style:string;watermarked:boolean;createdAt:string;kind?:string;primary?:boolean;order?:number}>;
   imageChecklist:Array<{name:string;order:number;watermarked:boolean;kind?:string;primary?:boolean}>;
+  mockupImages?:Array<{name:string;dataUrl:string;order:number;primary?:boolean}>;
   deliveryChecklist:Array<{name:string;size:number}>;
   createdAt:string;
   updatedAt:string;
@@ -52,6 +53,7 @@ export function listingReadiness(p:Project){
     {label:'Creation details · What is it?',ok:!!creation?.whatIsIt,critical:true},
     {label:'Creation details · AI disclosure',ok:!!creation?.digitalCreation,critical:true},
     {label:'Creation details · Production partner',ok:!!creation?.productionPartner&&(creation.productionPartner!=='uses-production-partner'||!!creation.productionPartnerName.trim()),critical:true},
+    {label:'Creation details · When made',ok:!!creation?.whenMade&&creation.whenMade!=='not-applicable-digital',critical:true},
     {label:'13 reviewed tags',ok:p.listing.tags.filter(Boolean).length===13,critical:false},
     {label:'SKU',ok:!!p.listing.sku.trim(),critical:false},
     {label:'Customer files',ok:p.sourceFiles.some(f=>f.customerFile),critical:false},

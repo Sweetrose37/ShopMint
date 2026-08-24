@@ -5,7 +5,8 @@ Manifest V3 Chrome companion for SHOPMINT Listing Packages. Load this exact `ext
 ## Permissions
 
 - `storage`: retains the current listing package locally during the workflow.
-- `activeTab`: communicates with the current user-selected Etsy listing tab after the user opens the popup.
+- `activeTab` and `scripting`: communicates with the current user-selected Etsy listing tab and reconnects safely when that tab was open before Sidekick was installed.
+- `unlimitedStorage`: temporarily retains a user-selected SHOPMINT package that can include the ordered listing mockups.
 - Etsy host access is limited to `etsy.com/your/shops/*` and `etsy.com/listing/*`. Content logic additionally verifies a listing create/edit URL before filling.
 
 No Etsy credentials or account data are read or stored. Product content is not logged. The service worker stores only the package the user explicitly loads.
@@ -18,7 +19,7 @@ No Etsy credentials or account data are read or stored. Product content is not l
 4. Choose **Everything supported**, **Text only**, or **Tags only**.
 5. Click **FILL MY LISTING**.
 6. Review the completion report and the Etsy form.
-7. Upload listing images and digital delivery files manually.
+7. Confirm packaged listing mockups finish uploading; choose customer delivery files manually.
 8. Publish manually only after review.
 
 The extension contains no code that finds or clicks Etsy publish/submit buttons.

@@ -22,6 +22,7 @@ describe('SHOPMINT Sidekick integration',()=>{
     fireEvent.click(screen.getByLabelText(/^a finished product$/i));
     fireEvent.click(screen.getByLabelText(/created by me/i));
     fireEvent.click(screen.getByLabelText(/^no production partner$/i));
+    fireEvent.change(screen.getByLabelText(/when was it made/i),{target:{value:'2020 - 2026'}});
     fireEvent.click(screen.getByRole('button',{name:/etsy sidekick/i}));
     expect((screen.getByRole('button',{name:/export for sidekick/i}) as HTMLButtonElement).disabled).toBe(false);
     expect(screen.getByText(/review-first by design/i)).toBeTruthy();

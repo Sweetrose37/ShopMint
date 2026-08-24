@@ -12,7 +12,8 @@ globalThis.ShopmintSidekick.etsy={
     secondaryColor:{labels:['Secondary color'],selectors:['input[name*="secondary_color" i]','select[name*="secondary_color" i]']},
     occasion:{labels:['Occasion'],selectors:['input[name*="occasion" i]','select[name*="occasion" i]']},
     holiday:{labels:['Holiday'],selectors:['input[name*="holiday" i]','select[name*="holiday" i]']},
-    personalization:{labels:['Personalization','Instructions for buyers'],selectors:['textarea[name*="personalization" i]','input[name*="personalization" i]']}
+    personalization:{labels:['Personalization','Instructions for buyers'],selectors:['textarea[name*="personalization" i]','input[name*="personalization" i]']},
+    whenMade:{labels:['When was it made?'],selectors:['select[name*="when" i]','select[aria-label*="When was it made" i]']}
   },
   tags:{inputSelectors:['input[name*="tag" i]','input[aria-label*="tag" i]','input[placeholder*="tag" i]','[data-selector="tags"] input'],containerSelectors:['[role="group"][aria-label="Tags"]','[role="group"][aria-labelledby*="tag" i]','[data-selector="tags"]','[data-field="tags"]','section[aria-label*="tag" i]']},
   creation:{
