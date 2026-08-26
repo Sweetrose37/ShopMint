@@ -19,7 +19,7 @@ No Etsy credentials or account data are read or stored. Product content is not l
 4. Choose **Everything supported**, **Text only**, or **Tags only**.
 5. Click **FILL MY LISTING**.
 6. Review the completion report and the Etsy form.
-7. Confirm packaged listing mockups finish uploading; choose customer delivery files manually.
+7. In Etsy Photo & Video, click Upload and select all exported listing mockups together; choose customer delivery files manually.
 8. Publish manually only after review.
 
 The extension contains no code that finds or clicks Etsy publish/submit buttons.

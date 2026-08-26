@@ -50,12 +50,6 @@ test('detects a supported Etsy editor and fills reactive fields once',async()=>{
   assert.equal(report.results.find(x=>x.field==='whenMade').status,'filled');
   assert.equal(report.results.find(x=>x.field==='category').status,'manual');
   assert.equal(report.results.find(x=>x.field==='digitalFiles').status,'manual');
-  await new Promise(resolve=>listener({type:'SHOPMINT_IMAGES_RESET'},null,resolve));
-  await new Promise(resolve=>listener({type:'SHOPMINT_IMAGE_STAGE',index:0,image:{name:'01-hero.png',dataUrl:'data:image/png;base64,AAAA'}},null,resolve));
-  const upload=await new Promise(resolve=>listener({type:'SHOPMINT_IMAGES_COMMIT'},null,resolve));
-  assert.equal(upload.ok,true);
-  assert.equal(upload.result.field,'listingImages');
-  assert.equal(upload.result.status,'notFound');
 });
 
 test('refuses to fill an Etsy page outside the listing editor',async()=>{
@@ -79,6 +73,8 @@ test('manifest is MV3 and content automation contains no publish action',async()
   const popup=await fs.readFile(new URL('../popup/popup.js',import.meta.url),'utf8');
   assert.match(popup,/scripting\.executeScript/);
   assert.match(popup,/content\/etsy-map\.js.*content\/content\.js/);
+  assert.match(popup,/Etsy Photo & Video/);
+  assert.doesNotMatch(popup,/SHOPMINT_IMAGE_STAGE/);
   const content=await fs.readFile(new URL('../content/content.js',import.meta.url),'utf8');
   assert.doesNotMatch(content,/(querySelector|getByText|getByRole)[^\n]*(publish|submit)/i);
   assert.doesNotMatch(content,/(publish|submit)[^\n]*\.click\s*\(/i);
