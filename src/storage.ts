@@ -1,4 +1,4 @@
-import type {Project,Settings} from './types';import {defaults} from './lib';
+import type {Project,Settings} from './types';import {defaults} from './lib';import {normalizeEtsyTags} from './etsyTags';
 const PK='shopmint.projects.v1',SK='shopmint.settings.v1';
 const GENERIC_IMPORT_NAME=/^(google drive download|selected files?|product folder|untitled product|downloads?)$/i;
 export function cleanImportedProject(project:Project):Project{
@@ -6,7 +6,7 @@ export function cleanImportedProject(project:Project):Project{
   const titleName=(project.listing.title||'').replace(/^[^A-Za-z0-9]+/,'').split(/[|—]/)[0].replace(/\s*[-–]?\s*\d+\s*(?:pk|pack)\b.*$/i,'').trim();
   const productName=titleName||'Premium Design Collection';
   const description=(project.listing.description||'').replace(/google drive download/gi,productName);
-  const tags=[...new Set(project.listing.tags.map(tag=>/^google drive$/i.test(tag)?'design collection':/^google download gift$/i.test(tag)?'dtf bundle':tag))];
+  const tags=normalizeEtsyTags(project.listing.tags.map(tag=>/^google drive$/i.test(tag)?'design collection':/^google download gift$/i.test(tag)?'dtf bundle':tag));
   return{...project,productName,listing:{...project.listing,description,tags}};
 }
 export const loadProjects=():Project[]=>{try{return (JSON.parse(localStorage.getItem(PK)||'[]') as Project[]).map(cleanImportedProject)}catch{return[]}};

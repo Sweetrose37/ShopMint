@@ -14,6 +14,8 @@ test('validates and normalizes packages without duplicate tags',()=>{
   assert.equal(withImages.mockupImages.length,1);
   assert.throws(()=>normalizePackage({...valid,schemaVersion:'9.0'}),/not supported/);
   assert.throws(()=>normalizePackage({...valid,title:undefined}),/missing: title/);
+  const cleaned=normalizePackage({...valid,tags:['pretty/girl png','this phrase is much too long for etsy','-bundle','pretty girl png']});
+  assert.deepEqual(cleaned.tags,['pretty girl png','this phrase is much','bundle']);
 });
 
 test('detects a supported Etsy editor and fills reactive fields once',async()=>{
