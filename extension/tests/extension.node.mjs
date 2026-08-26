@@ -38,6 +38,7 @@ test('detects a supported Etsy editor and fills reactive fields once',async()=>{
   tagInput.addEventListener('input',()=>{dom.window.document.querySelector('#add-tag').disabled=!tagInput.value});
   const addTag=()=>{if(tagInput.value){const chip=dom.window.document.createElement('span');chip.dataset.tag='';chip.textContent=tagInput.value;tagInput.parentElement.append(chip);const counter=dom.window.document.querySelector('#tag-counter');counter.textContent=`${Number.parseInt(counter.textContent,10)-1} left`;tagInput.value='';dom.window.document.querySelector('#add-tag').disabled=true}};
   dom.window.document.querySelector('#add-tag').addEventListener('click',addTag);
+  dom.window.eval(await fs.readFile(new URL('../content/etsy-main.js',import.meta.url),'utf8'));
   dom.window.eval(await fs.readFile(new URL('../content/etsy-map.js',import.meta.url),'utf8'));
   dom.window.eval(await fs.readFile(new URL('../content/content.js',import.meta.url),'utf8'));
   const ping=await new Promise(resolve=>listener({type:'SHOPMINT_PING'},null,resolve));
@@ -78,10 +79,13 @@ test('manifest is MV3 and content automation contains no publish action',async()
   assert.deepEqual(manifest.permissions,['storage','activeTab','scripting','unlimitedStorage']);
   const popup=await fs.readFile(new URL('../popup/popup.js',import.meta.url),'utf8');
   assert.match(popup,/scripting\.executeScript/);
+  assert.match(popup,/world:'MAIN'.*etsy-main\.js/);
   assert.match(popup,/content\/etsy-map\.js.*content\/content\.js/);
   assert.match(popup,/Etsy Photo & Video/);
   assert.doesNotMatch(popup,/SHOPMINT_IMAGE_STAGE/);
   const content=await fs.readFile(new URL('../content/content.js',import.meta.url),'utf8');
+  const mainBridge=await fs.readFile(new URL('../content/etsy-main.js',import.meta.url),'utf8');
+  assert.doesNotMatch(mainBridge,/(publish|submit)[^\n]*\.click\s*\(/i);
   assert.doesNotMatch(content,/(querySelector|getByText|getByRole)[^\n]*(publish|submit)/i);
   assert.doesNotMatch(content,/(publish|submit)[^\n]*\.click\s*\(/i);
 });

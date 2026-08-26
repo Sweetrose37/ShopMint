@@ -2,6 +2,7 @@ import {normalizePackage,STORAGE_KEY} from '../shared/schema.js';
 const $=s=>document.querySelector(s);let current=null;let page={isListingPage:false};
 const isSupportedListing=url=>/^https:\/\/www\.etsy\.com\/(?:your\/shops\/[^/]+\/(?:listing-editor\/(?:create|edit)|(?:tools\/)?listings?\/(?:create|edit))|listing\/\d+\/edit)/i.test(url||'');
 async function connectToListing(tab){
+  if(tab?.id&&isSupportedListing(tab.url))await chrome.scripting.executeScript({target:{tabId:tab.id},world:'MAIN',files:['content/etsy-main.js']}).catch(()=>{});
   try{return await chrome.tabs.sendMessage(tab.id,{type:'SHOPMINT_PING'})}catch(error){
     if(!tab?.id||!isSupportedListing(tab.url))throw error;
     await chrome.scripting.insertCSS({target:{tabId:tab.id},files:['content/panel.css']}).catch(()=>{});

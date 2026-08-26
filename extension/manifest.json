@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "SHOPMINT™ SIDEKICK",
-  "version": "1.1.5",
+  "version": "1.1.6",
   "description": "Safely assists with Etsy listing fields using a SHOPMINT Listing Package. Never publishes.",
   "permissions": ["storage", "activeTab", "scripting", "unlimitedStorage"],
   "host_permissions": ["https://www.etsy.com/your/shops/*", "https://www.etsy.com/listing/*"],
@@ -12,6 +12,11 @@
   },
   "background": {"service_worker":"background.js"},
   "content_scripts": [{
+    "matches": ["https://www.etsy.com/your/shops/*", "https://www.etsy.com/listing/*"],
+    "js": ["content/etsy-main.js"],
+    "run_at": "document_start",
+    "world": "MAIN"
+  },{
     "matches": ["https://www.etsy.com/your/shops/*", "https://www.etsy.com/listing/*"],
     "js": ["content/etsy-map.js", "content/content.js"],
     "css": ["content/panel.css"],
