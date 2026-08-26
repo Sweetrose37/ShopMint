@@ -24,7 +24,7 @@ test('detects a supported Etsy editor and fills reactive fields once',async()=>{
     <label for="quantity">Quantity</label><input id="quantity" name="quantity">
     <label for="sku">SKU</label><input id="sku" name="sku">
     <label for="when">When was it made?</label><select id="when" name="when_made"><option>When was it made?</option><option>2020 - 2026</option></select>
-    <div data-selector="tags"><input id="tags" aria-label="Add a tag"></div>
+    <div data-selector="tags"><input id="tags" aria-label="Add a tag"><button id="add-tag">Add</button></div>
     <fieldset><legend>Who made it?</legend><label><input id="who" type="radio" name="who">I did</label><label><input type="radio" name="who">A member of my shop</label></fieldset>
     <fieldset><legend>What is it?</legend><label><input id="what" type="radio" name="what">A finished product</label><label><input type="radio" name="what">A supply or tool to make things</label></fieldset>
     <fieldset><legend>How is this digital content created?</legend><label><input id="creation" type="radio" name="creation">Created by me <span>It’s designed and created entirely by me.</span></label><label><input type="radio" name="creation">With an AI generator</label></fieldset>
@@ -33,7 +33,8 @@ test('detects a supported Etsy editor and fills reactive fields once',async()=>{
   let listener;
   dom.window.chrome={runtime:{onMessage:{addListener(fn){listener=fn}}}};
   const tagInput=dom.window.document.querySelector('#tags');
-  tagInput.addEventListener('keydown',event=>{if(event.key==='Enter'&&tagInput.value){const chip=dom.window.document.createElement('span');chip.dataset.tag='';chip.textContent=tagInput.value;tagInput.parentElement.append(chip);tagInput.value=''}});
+  const addTag=()=>{if(tagInput.value){const chip=dom.window.document.createElement('span');chip.dataset.tag='';chip.textContent=tagInput.value;tagInput.parentElement.append(chip);tagInput.value=''}};
+  dom.window.document.querySelector('#add-tag').addEventListener('click',addTag);
   dom.window.eval(await fs.readFile(new URL('../content/etsy-map.js',import.meta.url),'utf8'));
   dom.window.eval(await fs.readFile(new URL('../content/content.js',import.meta.url),'utf8'));
   const ping=await new Promise(resolve=>listener({type:'SHOPMINT_PING'},null,resolve));
