@@ -24,7 +24,7 @@ test('detects a supported Etsy editor and fills reactive fields once',async()=>{
     <label for="quantity">Quantity</label><input id="quantity" name="quantity">
     <label for="sku">SKU</label><input id="sku" name="sku">
     <label for="when">When was it made?</label><select id="when" name="when_made"><option>When was it made?</option><option>2020 - 2026</option></select>
-    <div data-selector="tags"><input id="tags" aria-label="Add a tag"><button id="add-tag">Add</button></div>
+    <div data-selector="tags" role="group" aria-label="Tags"><input id="tags" aria-label="Add a tag"><button id="add-tag" disabled>Add</button><ul><li id="tag-counter">13 left</li></ul></div>
     <fieldset><legend>Who made it?</legend><label><input id="who" type="radio" name="who">I did</label><label><input type="radio" name="who">A member of my shop</label></fieldset>
     <fieldset><legend>What is it?</legend><label><input id="what" type="radio" name="what">A finished product</label><label><input type="radio" name="what">A supply or tool to make things</label></fieldset>
     <fieldset><legend>How is this digital content created?</legend><label><input id="creation" type="radio" name="creation">Created by me <span>It’s designed and created entirely by me.</span></label><label><input type="radio" name="creation">With an AI generator</label></fieldset>
@@ -33,7 +33,8 @@ test('detects a supported Etsy editor and fills reactive fields once',async()=>{
   let listener;
   dom.window.chrome={runtime:{onMessage:{addListener(fn){listener=fn}}}};
   const tagInput=dom.window.document.querySelector('#tags');
-  const addTag=()=>{if(tagInput.value){const chip=dom.window.document.createElement('span');chip.dataset.tag='';chip.textContent=tagInput.value;tagInput.parentElement.append(chip);tagInput.value=''}};
+  tagInput.addEventListener('input',()=>{dom.window.document.querySelector('#add-tag').disabled=!tagInput.value});
+  const addTag=()=>{if(tagInput.value){const chip=dom.window.document.createElement('span');chip.dataset.tag='';chip.textContent=tagInput.value;tagInput.parentElement.append(chip);const counter=dom.window.document.querySelector('#tag-counter');counter.textContent=`${Number.parseInt(counter.textContent,10)-1} left`;tagInput.value='';dom.window.document.querySelector('#add-tag').disabled=true}};
   dom.window.document.querySelector('#add-tag').addEventListener('click',addTag);
   dom.window.eval(await fs.readFile(new URL('../content/etsy-map.js',import.meta.url),'utf8'));
   dom.window.eval(await fs.readFile(new URL('../content/content.js',import.meta.url),'utf8'));
@@ -43,6 +44,8 @@ test('detects a supported Etsy editor and fills reactive fields once',async()=>{
   assert.equal(report.ok,true);
   assert.equal(dom.window.document.querySelector('#title').value,valid.title);
   assert.equal(dom.window.document.querySelectorAll('[data-tag]').length,2);
+  assert.equal(report.results.find(x=>x.field==='tags').status,'filled');
+  assert.equal(report.results.find(x=>x.field==='tags').reason,'2 tags verified in Etsy');
   assert.equal(dom.window.document.querySelector('#who').checked,true);
   assert.equal(dom.window.document.querySelector('#what').checked,true);
   assert.equal(dom.window.document.querySelector('#creation').checked,true);
